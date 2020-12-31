@@ -22,6 +22,14 @@ vsgImGui::vsgImGui( const vsg::ref_ptr<vsg::Window> &window ):
     _uploadFonts(window);
 }
 
+vsgImGui::~vsgImGui()
+{
+    ImGui_ImplVulkan_Shutdown();
+    ImGui::DestroyContext();
+    vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
+    vkDestroyCommandPool(_device, _commandPool, nullptr);
+}
+
 void vsgImGui::setShowDemoWindow( bool flag)
 {
     _showDemoWindow = flag;
@@ -74,7 +82,7 @@ void vsgImGui::_init( const vsg::ref_ptr<vsg::Window> &window )
     init_info.PipelineCache  = VK_NULL_HANDLE;
 
     // Create Descriptor Pool
-    VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
+    _descriptorPool = VK_NULL_HANDLE;
     {
         VkDescriptorPoolSize pool_sizes[] =
         {
@@ -96,11 +104,11 @@ void vsgImGui::_init( const vsg::ref_ptr<vsg::Window> &window )
         pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
         pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
         pool_info.pPoolSizes = pool_sizes;
-        err = vkCreateDescriptorPool(window->getDevice()->getDevice(), &pool_info, nullptr, &descriptorPool);
+        err = vkCreateDescriptorPool(window->getDevice()->getDevice(), &pool_info, nullptr, &_descriptorPool);
         check_vk_result(err);
     }
 
-    init_info.DescriptorPool  = descriptorPool;
+    init_info.DescriptorPool  = _descriptorPool;
     init_info.Allocator       = nullptr;
     init_info.MinImageCount   = 2;
     init_info.ImageCount      = 2;
@@ -113,7 +121,7 @@ void vsgImGui::_uploadFonts( const vsg::ref_ptr<vsg::Window> &window )
 {
     VkResult err;
 
-    VkCommandPool commandPool;
+    // VkcommandPool commandPool;
     {
         VkCommandPoolCreateInfo poolInfo = {};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -121,7 +129,7 @@ void vsgImGui::_uploadFonts( const vsg::ref_ptr<vsg::Window> &window )
         poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
         poolInfo.pNext = nullptr;
 
-        err = vkCreateCommandPool(_device, &poolInfo, window->getDevice()->getAllocationCallbacks(), &commandPool);
+        err = vkCreateCommandPool(_device, &poolInfo, window->getDevice()->getAllocationCallbacks(), &_commandPool);
         check_vk_result(err);
     }
 
@@ -129,14 +137,14 @@ void vsgImGui::_uploadFonts( const vsg::ref_ptr<vsg::Window> &window )
     {
         VkCommandBufferAllocateInfo allocateInfo = {};
         allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocateInfo.commandPool = commandPool;
+        allocateInfo.commandPool = _commandPool;
         allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocateInfo.commandBufferCount = 1;
         err = vkAllocateCommandBuffers(_device, &allocateInfo, &commandBuffer);
         check_vk_result(err);
     }
 
-    err = vkResetCommandPool(_device, commandPool, 0);
+    err = vkResetCommandPool(_device, _commandPool, 0);
     check_vk_result(err);
 
     VkCommandBufferBeginInfo begin_info = {};

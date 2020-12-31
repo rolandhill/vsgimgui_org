@@ -1,6 +1,5 @@
 #include "VSGImGui.h"
 #include "VSGImGuiEventHandler.h"
-#include "imgui/imgui.h"
 
 #include <vsg/all.h>
 
@@ -106,8 +105,6 @@ int main(int argc, char** argv)
     {
         std::cerr << "[Exception] - " << ve.message << std::endl;
     }
-
-    ImGui::DestroyContext();
 
     return 0;
 }
