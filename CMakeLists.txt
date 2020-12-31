@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(sigui
-        VERSION 0.0.0
-        DESCRIPTION "GUI tests for SI"
-        LANGUAGES CXX
-)
+project(vsgimgui)
 
 # build all examples into the bin directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -33,31 +29,32 @@ add_custom_target(clobber
 )
 
 set(SOURCES
-    src/si.cpp
-    src/imguiNode.cpp
-    src/drawImgui.cpp
-    external/imgui/imgui.cpp
-    external/imgui/imgui_widgets.cpp
-    external/imgui/imgui_draw.cpp
-    external/imgui/imgui_demo.cpp
-    external/imgui/imgui_impl_vulkan.cpp
+        main.cpp
+        VSGImGui.cpp
+        VSGImGuiEventHandler.cpp
+
+        imgui/imgui.cpp
+        imgui/imgui_demo.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_impl_vulkan.cpp
+        imgui/imgui_tables.cpp
+        imgui/imgui_widgets.cpp
 )
 
-add_executable(sigui ${SOURCES})
+add_executable(vsgimgui ${SOURCES})
 
-target_include_directories( sigui PUBLIC
-    include
-    external
+target_include_directories( vsgimgui PUBLIC
+    imgui
 )
 
-target_link_libraries(sigui vsg::vsg)
+target_link_libraries(vsgimgui vsg::vsg )
 
-if (vsgXchange_FOUND)
-    target_compile_definitions(sigui PRIVATE USE_VSGXCHANGE)
-    target_link_libraries(sigui vsgXchange::vsgXchange)
-endif()
-
-install(TARGETS sigui
+install( TARGETS vsgimgui
         RUNTIME DESTINATION bin
 )
+
+install(FILES vsgimgui
+        ${CMAKE_CURRENT_SOURCE_DIR}/teapot.vsgt
+        DESTINATION bin)
+
 
