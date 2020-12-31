@@ -1,89 +1,7 @@
 #include "VSGImGui.h"
 #include "VSGImGuiEventHandler.h"
 
-#include "imgui.h"
 #include <vsg/all.h>
-
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <algorithm>
-
-#if 0
-#ifndef VSG_IMGUI_EVENT_HANDLER_DEF
-#define VSG_IMGUI_EVENT_HANDLER_DEF
-
-class VSGImGuiEventHandler: public vsg::Inherit<vsg::Visitor, VSGImGuiEventHandler>
-{
-    public:
-        VSGImGuiEventHandler()
-        {}
-
-        ~VSGImGuiEventHandler()
-        {}
-
-        void apply(vsg::ButtonPressEvent& buttonPress) override
-        {
-            uint32_t button = _convertButton( buttonPress.button );
-            ImGuiIO &io = ImGui::GetIO();
-            io.MouseDown[button] = true;
-            io.MousePos.x = buttonPress.x;
-            io.MousePos.y = buttonPress.y;
-        }
-
-        void apply(vsg::ButtonReleaseEvent& buttonRelease) override
-        {
-            uint32_t button = _convertButton( buttonRelease.button );
-            ImGuiIO &io = ImGui::GetIO();
-            io.MouseDown[button] = false;
-            io.MousePos.x = buttonRelease.x;
-            io.MousePos.y = buttonRelease.y;
-        }
-
-        void apply(vsg::MoveEvent& moveEvent) override
-        {
-            ImGuiIO &io = ImGui::GetIO();
-            io.MousePos.x = moveEvent.x;
-            io.MousePos.y = moveEvent.y;
-        }
-
-        void apply(vsg::ScrollWheelEvent& scrollWheel) override
-        {
-            ImGuiIO &io = ImGui::GetIO();
-            io.MouseWheel += scrollWheel.delta[1];
-        }
-
-        void apply(vsg::ConfigureWindowEvent& configureWindow) override
-        {
-            ImGuiIO &io = ImGui::GetIO();
-            io.DisplaySize.x = configureWindow.width;
-            io.DisplaySize.y = configureWindow.height;
-        }
-
-        void apply(vsg::FrameEvent& frame) override
-        {
-            ImGuiIO &io = ImGui::GetIO();
-
-            // Should figure this out for real
-            io.DeltaTime = 1.0f/60.f;
-        }
-
-
-    private:
-        uint32_t _convertButton( uint32_t button )
-        {
-            return button == 1 ? 0 : button == 3 ? 1 : button;
-        }
-};
-
-
-namespace vsg
-{
-    VSG_type_name(VSGImGuiEventHandler);
-}
-
-#endif
-#endif
 
 int main(int argc, char** argv)
 {
@@ -172,20 +90,7 @@ int main(int argc, char** argv)
         // rendering main loop
         while (viewer->advanceToNextFrame() )
         {
-            // pass any events into EventHandlers assigned to the Viewer
-            //vsg::UIEvents events = viewer->getEvents();
-            //std::cout << events.size() << std::endl;
             viewer->handleEvents();
-
-            /*
-            {
-                ImGuiIO &io = ImGui::GetIO();
-
-                io.DeltaTime = 1.0f/60.f;
-                io.DisplaySize.x = window->extent2D().width;
-                io.DisplaySize.y = window->extent2D().height;
-            }
-            */
 
             gui->render();
 
@@ -201,6 +106,5 @@ int main(int argc, char** argv)
         std::cerr << "[Exception] - " << ve.message << std::endl;
     }
 
-    // clean up done automatically thanks to ref_ptr<>
     return 0;
 }

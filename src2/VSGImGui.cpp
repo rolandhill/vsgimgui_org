@@ -1,6 +1,5 @@
 #include "VSGImGui.h"
 #include "imgui/imgui_impl_vulkan.h"
-
 #include <iostream>
 
 namespace
@@ -15,7 +14,6 @@ namespace
             abort();
     }
 }
-
 
 vsgImGui::vsgImGui( const vsg::ref_ptr<vsg::Window> &window ):
     _showDemoWindow(true)

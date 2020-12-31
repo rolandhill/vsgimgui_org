@@ -2,7 +2,9 @@
 #include "imgui.h"
 
 VSGImGuiEventHandler::VSGImGuiEventHandler()
-{}
+{
+    t0 = std::chrono::high_resolution_clock::now();
+}
 
 VSGImGuiEventHandler::~VSGImGuiEventHandler()
 {}
@@ -49,8 +51,11 @@ void VSGImGuiEventHandler::apply(vsg::FrameEvent& frame)
 {
     ImGuiIO &io = ImGui::GetIO();
 
-    // Should figure this out for real
-    io.DeltaTime = 1.0f/60.f;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    double dt = std::chrono::duration_cast<std::chrono::duration<double>>(t1 - t0).count();
+    t0 = t1;
+
+    io.DeltaTime = dt;
 }
 
 
