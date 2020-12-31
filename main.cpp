@@ -1,5 +1,6 @@
 #include "VSGImGui.h"
 #include "VSGImGuiEventHandler.h"
+#include "imgui/imgui.h"
 
 #include <vsg/all.h>
 
