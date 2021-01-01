@@ -15,8 +15,7 @@ namespace
     }
 }
 
-vsgImGui::vsgImGui( const vsg::ref_ptr<vsg::Window> &window ):
-    _showDemoWindow(true)
+vsgImGui::vsgImGui( const vsg::ref_ptr<vsg::Window> &window )
 {
     _init(window);
     _uploadFonts(window);
@@ -30,23 +29,13 @@ vsgImGui::~vsgImGui()
     vkDestroyCommandPool(_device, _commandPool, nullptr);
 }
 
-void vsgImGui::setShowDemoWindow( bool flag)
-{
-    _showDemoWindow = flag;
-}
-
-bool vsgImGui::getShowDemoWindow() const
-{
-    return _showDemoWindow;
-}
-
 void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
 {
-    bool showDemoWindow = true;
+    bool pOpen = true;
 
     ImGui_ImplVulkan_NewFrame();
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow(&showDemoWindow);
+    ImGui::ShowDemoWindow(&pOpen);
     ImGui::Render();
 
     ImDrawData* draw_data = ImGui::GetDrawData();
