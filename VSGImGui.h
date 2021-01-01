@@ -7,15 +7,12 @@ class VSG_DECLSPEC vsgImGui: public vsg::Inherit<vsg::Command, vsgImGui>
     public:
         vsgImGui( const vsg::ref_ptr<vsg::Window> &window );
         virtual ~vsgImGui();
-        void setShowDemoWindow( bool flag);
-        bool getShowDemoWindow() const;
 
         void render();
 
         void record(vsg::CommandBuffer& commandBuffer) const override;
 
     private:
-        bool _showDemoWindow;
         VkInstance _instance;
         VkDevice _device;
         uint32_t _queueFamily;
