@@ -19,7 +19,10 @@ void VSGImGuiEventHandler::apply(vsg::ButtonPressEvent& buttonPress)
         io.MouseDown[button] = true;
         io.MousePos.x = buttonPress.x;
         io.MousePos.y = buttonPress.y;
+
+        buttonPress.handled = true;
     }
+
 }
 
 void VSGImGuiEventHandler::apply(vsg::ButtonReleaseEvent& buttonRelease)
@@ -31,6 +34,8 @@ void VSGImGuiEventHandler::apply(vsg::ButtonReleaseEvent& buttonRelease)
         io.MouseDown[button] = false;
         io.MousePos.x = buttonRelease.x;
         io.MousePos.y = buttonRelease.y;
+
+        buttonRelease.handled = true;
     }
 }
 
@@ -39,12 +44,15 @@ void VSGImGuiEventHandler::apply(vsg::MoveEvent& moveEvent)
     ImGuiIO &io = ImGui::GetIO();
     io.MousePos.x = moveEvent.x;
     io.MousePos.y = moveEvent.y;
+
+    moveEvent.handled =  io.WantCaptureMouse;
 }
 
 void VSGImGuiEventHandler::apply(vsg::ScrollWheelEvent& scrollWheel)
 {
     ImGuiIO &io = ImGui::GetIO();
     io.MouseWheel += scrollWheel.delta[1];
+    scrollWheel.handled =  io.WantCaptureMouse;
 }
 
 void VSGImGuiEventHandler::apply(vsg::ConfigureWindowEvent& configureWindow)
