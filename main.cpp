@@ -67,24 +67,40 @@ int main(int argc, char** argv)
 
         auto camera = vsg::Camera::create(perspective, lookAt, vsg::ViewportState::create(window->extent2D()));
 
+        // The commandGraph will contain a 3 stage renderGraph 1) 3D scene 2) clear depth buffers 3) ImGui
+        auto commandGraph = vsg::CommandGraph::create(window);
+        auto renderGraph = vsg::RenderGraph::create(window);
+        commandGraph->addChild(renderGraph);
+
+        // create the normal 3D view of the scene
+        auto view1 = vsg::View::create(camera, vsg_scene);
+        renderGraph->addChild(view1);
+
+        // clear the depth buffer before view2 gets rendered
+        VkClearAttachment attachment{VK_IMAGE_ASPECT_DEPTH_BIT, 1, VkClearValue{1.0f, 0.0f}};
+        VkClearRect rect{VkRect2D{VkOffset2D{0, 0}, VkExtent2D{window->extent2D().width, window->extent2D().height}}, 0, 1};
+        auto clearAttachments = vsg::ClearAttachments::create(vsg::ClearAttachments::Attachments{attachment}, vsg::ClearAttachments::Rects{rect});
+        renderGraph->addChild(clearAttachments);
+
+
+        // ********** Create the ImGui node and add it to the renderGraph  ************
+        auto gui = vsgImGui::create(window);
+        renderGraph->addChild(gui);
+        // ***************************************
+
         // add close handler to respond the close window button and pressing escape
         viewer->addEventHandler(vsg::CloseHandler::create(viewer));
 
         viewer->addEventHandler(vsg::Trackball::create(camera));
 
 
-        auto commandGraph = vsg::createCommandGraphForView(window, camera, vsg_scene);
-
-        ///////////////////////////////////////////////////////////
-
+        // ********** Add the ImGui event handler   **************
         viewer->addEventHandler(VSGImGuiEventHandler::create());
+        // ***************************************
 
-        auto gui = vsgImGui::create(window);
-        commandGraph->addChild(gui);
-
-        ///////////////////////////////////////////////////////////
 
         viewer->assignRecordAndSubmitTaskAndPresentation({commandGraph});
+
 
         viewer->compile();
 
@@ -93,7 +109,9 @@ int main(int argc, char** argv)
         {
             viewer->handleEvents();
 
+            // ***********  Update ImGui   ***********
             gui->render();
+            // ***************************************
 
             viewer->update();
 
