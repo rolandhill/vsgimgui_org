@@ -11,20 +11,27 @@ VSGImGuiEventHandler::~VSGImGuiEventHandler()
 
 void VSGImGuiEventHandler::apply(vsg::ButtonPressEvent& buttonPress)
 {
-    uint32_t button = _convertButton( buttonPress.button );
     ImGuiIO &io = ImGui::GetIO();
-    io.MouseDown[button] = true;
-    io.MousePos.x = buttonPress.x;
-    io.MousePos.y = buttonPress.y;
+
+    if( io.WantCaptureMouse )
+    {
+        uint32_t button = _convertButton( buttonPress.button );
+        io.MouseDown[button] = true;
+        io.MousePos.x = buttonPress.x;
+        io.MousePos.y = buttonPress.y;
+    }
 }
 
 void VSGImGuiEventHandler::apply(vsg::ButtonReleaseEvent& buttonRelease)
 {
-    uint32_t button = _convertButton( buttonRelease.button );
     ImGuiIO &io = ImGui::GetIO();
-    io.MouseDown[button] = false;
-    io.MousePos.x = buttonRelease.x;
-    io.MousePos.y = buttonRelease.y;
+    if( io.WantCaptureMouse )
+    {
+        uint32_t button = _convertButton( buttonRelease.button );
+        io.MouseDown[button] = false;
+        io.MousePos.x = buttonRelease.x;
+        io.MousePos.y = buttonRelease.y;
+    }
 }
 
 void VSGImGuiEventHandler::apply(vsg::MoveEvent& moveEvent)
