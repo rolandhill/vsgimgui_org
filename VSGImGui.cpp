@@ -31,7 +31,7 @@ vsgImGui::~vsgImGui()
 
 void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
 {
-    bool pOpen = true;
+    bool pOpen = false;
 
     ImGui_ImplVulkan_NewFrame();
     ImGui::NewFrame();
