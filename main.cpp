@@ -87,14 +87,13 @@ int main(int argc, char** argv)
         renderGraph->addChild(gui);
         // ***************************************
 
+        // ********** Add the ImGui event handler first to handle events early  **************
+        viewer->addEventHandler(VSGImGuiEventHandler::create());
+
         // add close handler to respond the close window button and pressing escape
         viewer->addEventHandler(vsg::CloseHandler::create(viewer));
 
         viewer->addEventHandler(vsg::Trackball::create(camera));
-
-
-        // ********** Add the ImGui event handler   **************
-        viewer->addEventHandler(VSGImGuiEventHandler::create());
         // ***************************************
 
 
