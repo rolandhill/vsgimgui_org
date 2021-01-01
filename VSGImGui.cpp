@@ -40,7 +40,7 @@ bool vsgImGui::getShowDemoWindow() const
     return _showDemoWindow;
 }
 
-void vsgImGui::render()
+void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
 {
     bool showDemoWindow = true;
 
@@ -48,11 +48,7 @@ void vsgImGui::render()
     ImGui::NewFrame();
     ImGui::ShowDemoWindow(&showDemoWindow);
     ImGui::Render();
-    ImDrawData* draw_data = ImGui::GetDrawData();
-}
 
-void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
-{
     ImDrawData* draw_data = ImGui::GetDrawData();
     if( draw_data )
         ImGui_ImplVulkan_RenderDrawData(draw_data, &(*commandBuffer));

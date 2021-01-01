@@ -109,10 +109,6 @@ int main(int argc, char** argv)
         {
             viewer->handleEvents();
 
-            // ***********  Update ImGui   ***********
-            gui->render();
-            // ***************************************
-
             viewer->update();
 
             viewer->recordAndSubmit();
