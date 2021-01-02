@@ -241,7 +241,8 @@ static void check_vk_result(VkResult err)
 static void CreateOrResizeBuffer(VkBuffer& buffer, VkDeviceMemory& buffer_memory, VkDeviceSize& p_buffer_size, size_t new_size, VkBufferUsageFlagBits usage)
 {
     ImGui_ImplVulkan_InitInfo* v = &g_VulkanInitInfo;
-    VkResult err;
+    VkResult err = vkDeviceWaitIdle(v->Device);
+
     if (buffer != VK_NULL_HANDLE)
         vkDestroyBuffer(v->Device, buffer, v->Allocator);
     if (buffer_memory != VK_NULL_HANDLE)
