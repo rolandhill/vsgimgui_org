@@ -60,9 +60,12 @@ void VSGImGuiEventHandler::apply(vsg::MoveEvent& moveEvent)
 
 void VSGImGuiEventHandler::apply(vsg::ScrollWheelEvent& scrollWheel)
 {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MouseWheel += scrollWheel.delta[1];
-    scrollWheel.handled =  io.WantCaptureMouse;
+    if ( !_dragging )
+    {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MouseWheel += scrollWheel.delta[1];
+        scrollWheel.handled =  io.WantCaptureMouse;
+    }
 }
 
 void VSGImGuiEventHandler::apply(vsg::ConfigureWindowEvent& configureWindow)
