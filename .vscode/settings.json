@@ -77,6 +77,20 @@
         "viewer": "cpp",
         "viewerbase": "cpp",
         "viewereventhandlers": "cpp",
-        "viewport": "cpp"
+        "viewport": "cpp",
+        "guieventadapter": "cpp",
+        "callback": "cpp",
+        "animationpathmanipulator": "cpp",
+        "device": "cpp",
+        "event": "cpp",
+        "eventhandler": "cpp",
+        "eventqueue": "cpp",
+        "eventvisitor": "cpp",
+        "guiactionadapter": "cpp",
+        "guieventhandler": "cpp",
+        "boundingbox": "cpp",
+        "boundingsphere": "cpp",
+        "timer": "cpp",
+        "graphicswindow": "cpp"
     }
 }

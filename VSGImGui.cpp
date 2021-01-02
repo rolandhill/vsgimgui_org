@@ -29,7 +29,7 @@ vsgImGui::~vsgImGui()
     vkDestroyCommandPool(_device, _commandPool, nullptr);
 }
 
-void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
+void vsgImGui::render() const
 {
     bool pOpen = false;
 
@@ -37,6 +37,11 @@ void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
     ImGui::NewFrame();
     ImGui::ShowDemoWindow(&pOpen);
     ImGui::Render();
+}
+
+void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
+{
+    // render();
 
     ImDrawData* draw_data = ImGui::GetDrawData();
     if( draw_data )

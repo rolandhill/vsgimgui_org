@@ -8,7 +8,7 @@ class VSG_DECLSPEC vsgImGui: public vsg::Inherit<vsg::Command, vsgImGui>
         vsgImGui( const vsg::ref_ptr<vsg::Window> &window );
         virtual ~vsgImGui();
 
-        void render();
+        void render() const;
 
         void record(vsg::CommandBuffer& commandBuffer) const override;
 
