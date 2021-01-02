@@ -29,13 +29,35 @@ vsgImGui::~vsgImGui()
     vkDestroyCommandPool(_device, _commandPool, nullptr);
 }
 
+void vsgImGui::setShowDemoWindow( bool flag)
+{
+    _showDemoWindow = flag;
+}
+
+bool vsgImGui::getShowDemoWindow() const
+{
+    return _showDemoWindow;
+}
+
+
+void vsgImGui::setRenderCallback( const RenderCallback &callback )
+{
+    _renderCallback = callback;
+}
+
 void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
 {
     bool pOpen = false;
 
     ImGui_ImplVulkan_NewFrame();
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow(&pOpen);
+
+    if( _renderCallback )
+        _renderCallback();
+
+    if( _showDemoWindow )
+        ImGui::ShowDemoWindow(&pOpen);
+
     ImGui::Render();
 
     ImDrawData* draw_data = ImGui::GetDrawData();
