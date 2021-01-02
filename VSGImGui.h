@@ -11,7 +11,8 @@ class VSG_DECLSPEC vsgImGui: public vsg::Inherit<vsg::Command, vsgImGui>
 
         using RenderCallback = std::function<void()>;
         void setRenderCallback(const RenderCallback &callback);
-        void render();
+
+        void render() const;
 
         void record(vsg::CommandBuffer& commandBuffer) const override;
 

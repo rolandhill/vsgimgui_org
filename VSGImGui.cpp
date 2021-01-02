@@ -45,7 +45,7 @@ void vsgImGui::setRenderCallback( const RenderCallback &callback )
     _renderCallback = callback;
 }
 
-void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
+void vsgImGui::render() const
 {
     bool pOpen = false;
 
@@ -59,6 +59,11 @@ void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
         ImGui::ShowDemoWindow(&pOpen);
 
     ImGui::Render();
+}
+
+void vsgImGui::record(vsg::CommandBuffer& commandBuffer) const
+{
+    // render();
 
     ImDrawData* draw_data = ImGui::GetDrawData();
     if( draw_data )
