@@ -17,6 +17,9 @@ class VSG_DECLSPEC VSGImGuiEventHandler: public vsg::Inherit<vsg::Visitor, VSGIm
         void apply(vsg::ConfigureWindowEvent& configureWindow) override;
         void apply(vsg::FrameEvent& frame) override;
 
+    protected:
+        bool _dragging;
+        
     private:
         uint32_t _convertButton( uint32_t button );
         std::chrono::high_resolution_clock::time_point t0;

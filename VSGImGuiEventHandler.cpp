@@ -1,7 +1,8 @@
 #include "VSGImGuiEventHandler.h"
 #include "imgui.h"
 
-VSGImGuiEventHandler::VSGImGuiEventHandler()
+VSGImGuiEventHandler::VSGImGuiEventHandler() :
+    _dragging(false)
 {
     t0 = std::chrono::high_resolution_clock::now();
 }
@@ -22,13 +23,17 @@ void VSGImGuiEventHandler::apply(vsg::ButtonPressEvent& buttonPress)
 
         buttonPress.handled = true;
     }
+    else
+    {
+        _dragging = true;
+    }
 
 }
 
 void VSGImGuiEventHandler::apply(vsg::ButtonReleaseEvent& buttonRelease)
 {
     ImGuiIO &io = ImGui::GetIO();
-    if( io.WantCaptureMouse )
+    if( (!_dragging) && io.WantCaptureMouse )
     {
         uint32_t button = _convertButton( buttonRelease.button );
         io.MouseDown[button] = false;
@@ -37,15 +42,20 @@ void VSGImGuiEventHandler::apply(vsg::ButtonReleaseEvent& buttonRelease)
 
         buttonRelease.handled = true;
     }
+
+    _dragging = false;
 }
 
 void VSGImGuiEventHandler::apply(vsg::MoveEvent& moveEvent)
 {
-    ImGuiIO &io = ImGui::GetIO();
-    io.MousePos.x = moveEvent.x;
-    io.MousePos.y = moveEvent.y;
+    if ( !_dragging )
+    {
+        ImGuiIO &io = ImGui::GetIO();
+        io.MousePos.x = moveEvent.x;
+        io.MousePos.y = moveEvent.y;
 
-    moveEvent.handled =  io.WantCaptureMouse;
+        moveEvent.handled =  io.WantCaptureMouse;
+    }
 }
 
 void VSGImGuiEventHandler::apply(vsg::ScrollWheelEvent& scrollWheel)
