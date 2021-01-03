@@ -1,14 +1,16 @@
 # vsgimgui
 Integrating ImGui with VulkanSceneGraph  
+2021  
 Roland Hill  
 Don Burns  
 
-This repository contains working files for integrating ImGui with VSG. It takes the form of a VSG viewer that displays a hardwired teapot with the ImGui Demo window overlaid.
+This repository contains files for integrating Dear ImGui with VSG. To use, follow these steps:
 
-- There are still numerous Vulkan debug messages.  
-- Mouse integration is included, but keyboard integration needs to be done.
+1. Set up a RenderGraph so that the Dear ImGui user interface can be rendered on top of your 3D scene.  
+1. Create an instance of vsgImGui and add it to the renderGraph.  
+1. Create an instance of VSGImGuiEventHandler and add it as a handler to the viewer. Note that it should be added first so that ImGui can grab any mouse and keyboard input it needs then pass other events to the rest of VSG.
 
-After you build vsgimgui, you need to copy teapot.vsgt into the bin directory.  
+There is a example program to demostrate use. If you want to build and run the example you will need to copy teapot.vsgt into your bin directory as it's hardwired.
 
-Use *./vsgimgui -d* to show the Vulkan debug messages in the console.
+The source code is published under the [MIT License](LICENSE.md).
 
