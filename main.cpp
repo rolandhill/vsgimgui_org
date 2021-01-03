@@ -1,7 +1,65 @@
 #include "VSGImGui.h"
 #include "VSGImGuiEventHandler.h"
+#include "imgui/imgui.h"
 
 #include <vsg/all.h>
+
+struct Params
+{
+    bool showGui = true;         // you can toggle this with your own EventHandler and key
+    bool showDemoWindow = false;
+    bool showSecondWindow = false;
+    float clearColor[3] { 0.2f, 0.2f, 0.4f }; // Unfortunately, this doesn't change dynamically in vsg
+    uint32_t counter = 0;
+    float dist = 0.f;
+};
+
+class MyRenderCallback
+{
+    public:
+        MyRenderCallback( Params &params ):
+            _params(params)
+        {}
+
+        // Example here taken from the Dear imgui comments (mostly)
+        void operator()()
+        {
+            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+            if( _params.showGui )
+            {
+                ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+                ImGui::Text("Some useful message here.");               // Display some text (you can use a format strings too)
+                ImGui::Checkbox("Demo Window", &_params.showDemoWindow);      // Edit bools storing our window open/close state
+                ImGui::Checkbox("Another Window", &_params.showSecondWindow);
+                ImGui::SliderFloat("float", &_params.dist, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+                ImGui::ColorEdit3("clear color", (float*)&_params.clearColor); // Edit 3 floats representing a color
+
+                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                    _params.counter++;
+
+                ImGui::SameLine();
+                ImGui::Text("counter = %d", _params.counter);
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ImGui::End();
+            }
+
+            // 3. Show another simple window.
+            if( _params.showSecondWindow )
+            {
+                ImGui::Begin("Another Window", &_params.showSecondWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+                ImGui::Text("Hello from another window!");
+                if (ImGui::Button("Close Me"))
+                    _params.showSecondWindow = false;
+                ImGui::End();
+            }
+        }
+
+
+    private:
+        Params &_params;
+};
 
 int main(int argc, char** argv)
 {
@@ -27,7 +85,12 @@ int main(int argc, char** argv)
     {
         auto vsg_scene = vsg::Group::create();
 
-        if (auto node = vsg::read_cast<vsg::Node>("teapot.vsgt"); node) vsg_scene->addChild(node);
+        auto nodeTx = vsg::MatrixTransform::create();
+        if (auto node = vsg::read_cast<vsg::Node>("teapot.vsgt"); node) 
+        {
+            nodeTx->addChild( node );
+            vsg_scene->addChild(nodeTx);
+        }
 
 
         // create the viewer and assign window(s) to it
@@ -52,7 +115,8 @@ int main(int argc, char** argv)
         double nearFarRatio = 0.01;
 
         // set up the camera
-        auto lookAt = vsg::LookAt::create(centre+vsg::dvec3(0.0, -radius*3.5, 0.0), centre, vsg::dvec3(0.0, 0.0, 1.0));
+        //auto lookAt = vsg::LookAt::create(centre+vsg::dvec3(0.0, -radius*3.5, 0.0), centre, vsg::dvec3(0.0, 0.0, 1.0));
+        auto lookAt = vsg::LookAt::create(centre+vsg::dvec3(0.0, 0.0, radius*3.5), centre, vsg::dvec3(0.0, 1.0, 0.0));
 
         vsg::ref_ptr<vsg::ProjectionMatrix> perspective;
         if (vsg::ref_ptr<vsg::EllipsoidModel> ellipsoidModel(vsg_scene->getObject<vsg::EllipsoidModel>("EllipsoidModel")); ellipsoidModel)
@@ -85,6 +149,9 @@ int main(int argc, char** argv)
         // ********** Create the ImGui node and add it to the renderGraph  ************
         auto gui = vsgImGui::create(window);
         renderGraph->addChild(gui);
+
+        Params params;
+        gui->setRenderCallback( MyRenderCallback( params ) );
         // ***************************************
 
         // ********** Add the ImGui event handler first to handle events early  **************
@@ -106,6 +173,15 @@ int main(int argc, char** argv)
         while (viewer->advanceToNextFrame() )
         {
             viewer->handleEvents();
+
+            {
+                gui->setShowDemoWindow( params.showDemoWindow );
+
+                vsg::dmat4 M;
+                camera->getViewMatrix()->get(M);
+                vsg::dmat4 Mi = vsg::inverse(M);
+                nodeTx->setMatrix( Mi * vsg::translate( 0.0, 0.0, params.dist * -100.0 )  * M );
+            }
 
             viewer->update();
 
