@@ -156,12 +156,12 @@ int main(int argc, char** argv)
 
         // ********** Add the ImGui event handler first to handle events early  **************
         viewer->addEventHandler(VSGImGuiEventHandler::create(gui));
+        // ***************************************
 
         // add close handler to respond the close window button and pressing escape
         viewer->addEventHandler(vsg::CloseHandler::create(viewer));
 
         viewer->addEventHandler(vsg::Trackball::create(camera));
-        // ***************************************
 
 
         viewer->assignRecordAndSubmitTaskAndPresentation({commandGraph});

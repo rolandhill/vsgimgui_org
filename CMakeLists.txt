@@ -53,8 +53,5 @@ install( TARGETS vsgimgui
         RUNTIME DESTINATION bin
 )
 
-install(FILES vsgimgui
-        ${CMAKE_CURRENT_SOURCE_DIR}/teapot.vsgt
-        DESTINATION bin)
-
+configure_file(teapot.vsgt ${PROJECT_BINARY_DIR}/bin/teapot.vsgt COPYONLY)
 
