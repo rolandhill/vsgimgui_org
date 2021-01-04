@@ -1,5 +1,5 @@
 # vsgimgui
-Integrating ImGui with VulkanSceneGraph  
+Integrating Dear ImGui with VulkanSceneGraph  
 2021  
 Roland Hill  
 Don Burns  
