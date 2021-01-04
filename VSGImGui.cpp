@@ -120,10 +120,16 @@ void vsgImGui::_init( const vsg::ref_ptr<vsg::Window> &window )
         check_vk_result(err);
     }
 
+    VkSurfaceCapabilitiesKHR capabilities;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice->getPhysicalDevice(), *(window->getSurface()), &capabilities);
+    uint32_t imageCount = 3;
+    imageCount = std::max(imageCount, capabilities.minImageCount);                        // Vulkan spec requires minImageCount to be 1 or greater
+    if (capabilities.maxImageCount > 0) imageCount = std::min(imageCount, capabilities.maxImageCount); // Vulkan spec specifies 0 as being unlimited number of images
+
     init_info.DescriptorPool  = _descriptorPool;
     init_info.Allocator       = nullptr;
-    init_info.MinImageCount   = 2;
-    init_info.ImageCount      = 2;
+    init_info.MinImageCount   = capabilities.minImageCount;
+    init_info.ImageCount      = imageCount;
     init_info.CheckVkResultFn = check_vk_result;
 
     ImGui_ImplVulkan_Init(&init_info, *window->getOrCreateRenderPass());
