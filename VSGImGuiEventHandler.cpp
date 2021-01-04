@@ -1,15 +1,31 @@
+/*
+Copyright(c) 2021 Roland Hill
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom 
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include "VSGImGuiEventHandler.h"
 #include "imgui.h"
 
+// Keyboard handling code inspired by https://gist.github.com/fulezi/d2442ca7626bf270226014501357042c (license not stated)
+//
 //////////////////////////////////////////////////////////////////////////////
 // Imporant Note: Dear ImGui expects the control Keys indices not to be	    //
 // greater thant 511. It actually uses an array of 512 elements. However,   //
-// OSG has indices greater than that. So here I do a conversion for special //
-// keys between ImGui and OSG.						    //
+// VSG has indices greater than that. So here I do a conversion for special //
+// keys between ImGui and VSG.						    //
 //////////////////////////////////////////////////////////////////////////////
 
 /**
- * Special keys that are usually greater than 512 in OSGga
+ * Special keys that are usually greater than 512 in VSG
  **/
 enum ConvertedKey : int
 {
@@ -42,7 +58,7 @@ enum ConvertedKey : int
  * Check for a special key and return the converted code (range [257, 511]) if
  * so. Otherwise returns -1
  */
-static int ConvertFromOSGKey(uint16_t key)
+static int ConvertFromVSGKey(uint16_t key)
 {
   using KEY = vsg::KeySymbol;
 
@@ -183,7 +199,7 @@ void VSGImGuiEventHandler::apply(vsg::KeyPressEvent& keyPress)
     if( io.WantCaptureKeyboard )
     {
         const uint16_t c = keyPress.keyModified;
-        const uint16_t special_key = ConvertFromOSGKey(c);
+        const uint16_t special_key = ConvertFromVSGKey(c);
         if (special_key > 0)
         {
             assert(special_key < 512 && "ImGui KeysDown is an array of 512");
@@ -217,7 +233,7 @@ void VSGImGuiEventHandler::apply(vsg::KeyReleaseEvent& keyRelease)
     if( io.WantCaptureKeyboard )
     {
         const uint16_t c = keyRelease.keyModified;
-        const uint16_t special_key = ConvertFromOSGKey(keyRelease.keyBase);
+        const uint16_t special_key = ConvertFromVSGKey(keyRelease.keyBase);
         if (special_key > 0)
         {
             assert(special_key < 512 && "ImGui KeysDown is an array of 512");
